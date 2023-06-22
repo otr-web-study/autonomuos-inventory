@@ -19,7 +19,7 @@ import TheCloseButton from './TheCloseButton.vue';
 
 .info-block__text {
   width: 100%;
-  height: 100%;
+  flex-grow: 1;
   max-width: 700px;
   border-radius: 12px;
   background: linear-gradient(90deg, #3c3c3c 0%, #444 51.04%, #333 100%);

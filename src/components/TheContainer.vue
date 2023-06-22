@@ -12,7 +12,7 @@
   max-height: 660px;
   padding: 32px;
   display: grid;
-  grid-template-columns: 208px 1fr;
+  grid-template-columns: 236px 1fr;
   grid-template-rows: 1fr 72px;
   gap: 24px;
   background: #1d1d1d;
