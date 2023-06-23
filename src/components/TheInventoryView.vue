@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{ type?: InventoryType }>(), {
   <div
     class="inventory"
     :class="{
-      nventory_type_big: props.type === 'big'
+      inventory_type_big: props.type === 'big'
     }"
   ></div>
 </template>
@@ -42,5 +42,7 @@ const props = withDefaults(defineProps<{ type?: InventoryType }>(), {
 .inventory_type_big::after {
   width: 116px;
   height: 116px;
+  top: -16px;
+  right: -16px;
 }
 </style>

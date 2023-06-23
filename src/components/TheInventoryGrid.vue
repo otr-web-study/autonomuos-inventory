@@ -4,7 +4,7 @@ import TheBlockContainer from './TheBlockContainer.vue';
 import TheInventory from './TheInventory.vue';
 import TheModal from './TheModal.vue';
 
-const isModalOpened = ref(true);
+const isModalOpened = ref(false);
 </script>
 
 <template>

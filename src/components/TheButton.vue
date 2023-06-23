@@ -11,7 +11,7 @@
   display: flext;
   justify-content: center;
   align-items: center;
-  padding: 8px 28px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: none;
   outline: none;
