@@ -3,17 +3,60 @@ import { ref } from 'vue';
 import TheBlockContainer from './TheBlockContainer.vue';
 import TheInventory from './TheInventory.vue';
 import TheModal from './TheModal.vue';
+import { useAppStore } from '@/stores/app-store';
+import { storeToRefs } from 'pinia';
+import type { Inventory, InventoryDragArgument } from '@/types/inventory';
 
-const isModalOpened = ref(false);
+const store = useAppStore();
+const { items: inventoryItems } = storeToRefs(store);
+const selectedInventory = ref<InventoryDragArgument | null>(null);
+
+const handleInventoryClick = (inventory: Inventory, idx: number) => {
+  selectedInventory.value = { inventory, idx };
+};
+
+const onDrop = (e: DragEvent, index: number) => {
+  const dragArgument: InventoryDragArgument | null = JSON.parse(
+    e.dataTransfer?.getData('dragArgument') || 'null'
+  );
+  if (!dragArgument) return;
+
+  const { idx, inventory } = dragArgument;
+
+  if (inventoryItems.value[index] && inventoryItems.value[index].type !== inventory.type) return;
+
+  store.addInventoryToCell(index.toString(), { ...inventory, count: 1 });
+  store.removeInventoryFromCell(idx.toString(), { ...inventory, count: 1 });
+};
 </script>
 
 <template>
   <TheBlockContainer class="inventory-grid">
-    <div class="inventory-grid__cell" v-for="idx in 20" :key="idx">
-      <TheInventory />
-      <span class="inventory-grid__item-counter">1</span>
+    <div
+      v-for="idx in 20"
+      :key="idx"
+      class="inventory-grid__cell"
+      dropzone="true"
+      @drop="onDrop($event, idx)"
+      @dragover.prevent
+      @dragenter.prevent
+    >
+      <TheInventory
+        v-if="inventoryItems[idx]"
+        :inventory="inventoryItems[idx]"
+        :idx="idx"
+        @click="handleInventoryClick(inventoryItems[idx], idx)"
+      />
+      <span v-if="inventoryItems[idx]" class="inventory-grid__item-counter">{{
+        inventoryItems[idx].count
+      }}</span>
     </div>
-    <TheModal v-if="isModalOpened" />
+    <TheModal
+      v-if="selectedInventory"
+      :inventory="selectedInventory.inventory"
+      :idx="selectedInventory.idx"
+      @close-modal="selectedInventory = null"
+    />
   </TheBlockContainer>
 </template>
 
@@ -22,6 +65,7 @@ const isModalOpened = ref(false);
   position: relative;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 124.5px);
 }
 
 .inventory-grid__cell {

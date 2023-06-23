@@ -3,32 +3,67 @@ import { ref } from 'vue';
 import TheInventoryView from './TheInventoryView.vue';
 import TheButton from './TheButton.vue';
 import TheCloseButton from './TheCloseButton.vue';
+import type { InventoryDragArgument } from '@/types/inventory';
+import { useAppStore } from '@/stores/app-store';
 
 type ModalMode = 'confirm' | 'prompt';
 
+const props = defineProps<InventoryDragArgument>();
+const emits = defineEmits<{ (e: 'close-modal'): void }>();
+const store = useAppStore();
+
 const mode = ref<ModalMode>('confirm');
+const count = ref(props.inventory.count);
+
+const handleCloseBtnClick = () => {
+  emits('close-modal');
+};
+
+const handleDeleteBtnClick = () => {
+  if (count.value === 1) {
+    store.removeInventoryFromCell(props.idx.toString(), props.inventory);
+    emits('close-modal');
+    return;
+  }
+
+  mode.value = 'prompt';
+};
+
+const handleConfirmBtnClick = () => {
+  const validCount = Math.max(Math.min(count.value, props.inventory.count), 1);
+  store.removeInventoryFromCell(props.idx.toString(), { ...props.inventory, count: validCount });
+  mode.value = 'confirm';
+  emits('close-modal');
+};
 </script>
 
 <template>
   <div class="modal">
     <div class="modal__content">
       <div class="modal__container">
-        <TheInventoryView class="modal__inventory" :type="'big'" />
+        <TheInventoryView class="modal__inventory" :size="'big'" :type="props.inventory.type" />
         <div class="modal__description">
-          <h2 class="modal__description-title">title</h2>
+          <h2 class="modal__description-title">{{ props.inventory.title }}</h2>
           <p class="modal__description-item"></p>
           <p class="modal__description-item"></p>
         </div>
       </div>
       <div class="modal__controls">
-        <TheButton class="modal__confirm-btn" v-if="mode === 'confirm'">Удалить предмет</TheButton>
+        <TheButton
+          class="modal__confirm-btn"
+          v-if="mode === 'confirm'"
+          @click="handleDeleteBtnClick"
+          >Удалить предмет</TheButton
+        >
         <div v-else class="modal__promt-container">
-          <input class="modal__count" placeholder="Введите количество" />
-          <TheButton>Отмена</TheButton>
-          <TheButton class="modal__confirm-btn">Подтвердить</TheButton>
+          <input class="modal__count" placeholder="Введите количество" v-model.number="count" />
+          <TheButton @click="emits('close-modal')">Отмена</TheButton>
+          <TheButton class="modal__confirm-btn" @click="handleConfirmBtnClick"
+            >Подтвердить</TheButton
+          >
         </div>
       </div>
-      <TheCloseButton class="modal__close-btn" />
+      <TheCloseButton class="modal__close-btn" @click="handleCloseBtnClick" />
     </div>
   </div>
 </template>

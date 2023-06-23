@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { type InventoryType } from '@/types/inventory';
+import type { InventorySize, InventoryType } from '@/types/inventory';
 
-const props = withDefaults(defineProps<{ type?: InventoryType }>(), {
-  type: 'small'
+interface InventoryViewProps {
+  size?: InventorySize;
+  type: InventoryType;
+}
+
+const props = withDefaults(defineProps<InventoryViewProps>(), {
+  size: 'small'
 });
 </script>
 
 <template>
   <div
     class="inventory"
-    :class="{
-      inventory_type_big: props.type === 'big'
-    }"
+    :class="[
+      `inventory_type_${type}`,
+      {
+        inventory_size_big: props.size === 'big'
+      }
+    ]"
   ></div>
 </template>
 
@@ -20,7 +28,6 @@ const props = withDefaults(defineProps<{ type?: InventoryType }>(), {
   position: relative;
   width: 54px;
   height: 54px;
-  background: #7faa65;
 }
 
 .inventory::after {
@@ -28,21 +35,44 @@ const props = withDefaults(defineProps<{ type?: InventoryType }>(), {
   width: 54px;
   height: 54px;
   content: '';
-  background: rgba(184, 217, 152, 0.35);
   backdrop-filter: blur(6px);
   top: -6px;
   right: -6px;
 }
 
-.inventory_type_big {
+.inventory_size_big {
   width: 116px;
   height: 116px;
 }
 
-.inventory_type_big::after {
+.inventory_size_big::after {
   width: 116px;
   height: 116px;
   top: -16px;
   right: -16px;
+}
+
+.inventory_type_green {
+  background: #7faa65;
+}
+
+.inventory_type_green::after {
+  background: rgba(184, 217, 152, 0.35);
+}
+
+.inventory_type_brown {
+  background: #aa9785;
+}
+
+.inventory_type_brown::after {
+  background: rgba(217, 187, 152, 0.35);
+}
+
+.inventory_type_blue {
+  background: #656caa;
+}
+
+.inventory_type_blue::after {
+  background: rgba(116, 129, 237, 0.35);
 }
 </style>

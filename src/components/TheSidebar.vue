@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import TheBlockContainer from './TheBlockContainer.vue';
 import TheButton from './TheButton.vue';
+import { useAppStore } from '@/stores/app-store';
+
+const store = useAppStore();
 </script>
 
 <template>
@@ -11,7 +14,9 @@ import TheButton from './TheButton.vue';
     </div>
     <div class="sidebar__skeleton">
       <h1 class="sidebar__title">AUTONOMUOS-INVENTORY</h1>
-      <TheButton class="sidebar__reset-btn">Сбросить</TheButton>
+      <TheButton class="sidebar__reset-btn" @click="store.resetItemsToDefault()"
+        >Сбросить</TheButton
+      >
     </div>
   </TheBlockContainer>
 </template>
