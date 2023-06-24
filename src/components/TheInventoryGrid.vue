@@ -1,32 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import TheBlockContainer from './TheBlockContainer.vue';
 import TheInventory from './TheInventory.vue';
 import TheModal from './TheModal.vue';
 import { useAppStore } from '@/stores/app-store';
-import { storeToRefs } from 'pinia';
+import { useDragNDrop } from '@/hooks/useDragNDrop';
 import type { Inventory, InventoryDragArgument } from '@/types/inventory';
 
 const store = useAppStore();
 const { items: inventoryItems } = storeToRefs(store);
 const selectedInventory = ref<InventoryDragArgument | null>(null);
 
+const { activeZones, onDrop, onDragEnter, onDragLeave, onDragOver } = useDragNDrop();
+
 const handleInventoryClick = (inventory: Inventory, idx: number) => {
   selectedInventory.value = { inventory, idx };
-};
-
-const onDrop = (e: DragEvent, index: number) => {
-  const dragArgument: InventoryDragArgument | null = JSON.parse(
-    e.dataTransfer?.getData('dragArgument') || 'null'
-  );
-  if (!dragArgument) return;
-
-  const { idx, inventory } = dragArgument;
-
-  if (inventoryItems.value[index] && inventoryItems.value[index].type !== inventory.type) return;
-
-  store.addInventoryToCell(index.toString(), { ...inventory, count: 1 });
-  store.removeInventoryFromCell(idx.toString(), { ...inventory, count: 1 });
 };
 </script>
 
@@ -36,10 +25,12 @@ const onDrop = (e: DragEvent, index: number) => {
       v-for="idx in 20"
       :key="idx"
       class="inventory-grid__cell"
+      :class="{ 'inventory-grid__cell_active': activeZones.includes(idx) }"
       dropzone="true"
       @drop="onDrop($event, idx)"
-      @dragover.prevent
-      @dragenter.prevent
+      @dragleave="onDragLeave($event, idx)"
+      @dragenter="onDragEnter($event, idx)"
+      @dragover="onDragOver($event, idx)"
     >
       <TheInventory
         v-if="inventoryItems[idx]"
@@ -91,5 +82,9 @@ const onDrop = (e: DragEvent, index: number) => {
   border: 1px solid #4d4d4d;
   color: white;
   opacity: 0.5;
+}
+
+.inventory-grid__cell_active {
+  background: #5a5959;
 }
 </style>

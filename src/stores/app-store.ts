@@ -12,6 +12,7 @@ const initialItems: InventoryStorable = {
 export const useAppStore = defineStore('app-store', () => {
   const items = ref<InventoryStorable>(getLocalData('autonomuos-inventory/items', initialItems));
   const infoMessage = ref<string | null>('Welcome to our AUTONOMUOS-INVENTORY!');
+  const modalOpened = ref(false);
 
   const setInfoMessage = (message: string | null) => {
     infoMessage.value = message;
@@ -52,6 +53,7 @@ export const useAppStore = defineStore('app-store', () => {
   return {
     items,
     infoMessage,
+    modalOpened,
     setInfoMessage,
     addInventoryToCell,
     removeInventoryFromCell,

@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import TheInventoryView from './TheInventoryView.vue';
+import { useDragNDrop } from '@/hooks/useDragNDrop';
 import type { InventoryDragArgument } from '@/types/inventory';
 
 const props = defineProps<InventoryDragArgument>();
 
-const onDragStart = (e: DragEvent) => {
-  if (!e.dataTransfer) return;
-
-  e.dataTransfer.dropEffect = 'move';
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('dragArgument', JSON.stringify(props));
-};
+const { onDragStart } = useDragNDrop();
 </script>
 
 <template>
   <TheInventoryView
     :type="props.inventory.type"
     draggable="true"
-    @dragstart="onDragStart"
+    @dragstart="onDragStart($event, props)"
     class="inventory-view"
   />
 </template>

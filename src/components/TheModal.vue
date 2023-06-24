@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import TheInventoryView from './TheInventoryView.vue';
 import TheButton from './TheButton.vue';
 import TheCloseButton from './TheCloseButton.vue';
@@ -35,11 +35,19 @@ const handleConfirmBtnClick = () => {
   mode.value = 'confirm';
   emits('close-modal');
 };
+
+onMounted(() => {
+  store.modalOpened = true;
+});
+
+onUnmounted(() => {
+  store.modalOpened = false;
+});
 </script>
 
 <template>
   <div class="modal">
-    <div class="modal__content">
+    <div v-if="store.modalOpened" class="modal__content">
       <div class="modal__container">
         <TheInventoryView class="modal__inventory" :size="'big'" :type="props.inventory.type" />
         <div class="modal__description">

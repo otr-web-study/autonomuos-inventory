@@ -14,7 +14,10 @@ const store = useAppStore();
     </div>
     <div class="sidebar__skeleton">
       <h1 class="sidebar__title">AUTONOMUOS-INVENTORY</h1>
-      <TheButton class="sidebar__reset-btn" @click="store.resetItemsToDefault()"
+      <TheButton
+        :class="['sidebar__reset-btn', { 'sidebar__reset-btn_disabled': store.modalOpened }]"
+        :disabled="store.modalOpened"
+        @click="store.resetItemsToDefault()"
         >Сбросить</TheButton
       >
     </div>
@@ -73,5 +76,10 @@ const store = useAppStore();
 .sidebar__reset-btn {
   background: #3c3c3c;
   color: white;
+}
+
+.sidebar__reset-btn_disabled {
+  cursor: none;
+  opacity: 0.8;
 }
 </style>
